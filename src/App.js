@@ -1,24 +1,24 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
+import Header from "./components/header";
+import Catalogo from "./components/catalogo";
+import Footer from "./components/footer";
+import Registro from "./views/public/registro";
+import Login from "./views/public/login";
+import IndexP from "./views/private/indexP";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <Header />
+      <Routes>
+        <Route path="/" element={<Catalogo />} />
+        <Route path="/registro" element={<Registro />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/private/indexP" element={<IndexP />} />
+        <Route path="*" element={<Navigate to="/login" />} />
+      </Routes>
+      <Footer />
+    </>
   );
 }
 
