@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs"); 
 
-// Definir el esquema de usuario
 const usuarioSchema = new mongoose.Schema({
   nombre: { type: String, required: true },
   ap: { type: String, required: true },
@@ -12,7 +11,9 @@ const usuarioSchema = new mongoose.Schema({
   telefono: { type: String, required: true },
   preguntaSecreta: { type: String, required: true },
   respuestaSecreta: { type: String, required: true },
+  rol: { type: String, enum: ["usuario", "admin"], default: "usuario" },
 });
+
 
 usuarioSchema.methods.comparePassword = async function (password) {
   return bcrypt.compare(password, this.password);

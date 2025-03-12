@@ -17,14 +17,10 @@ router.post("/", async (req, res) => {
       respuestaSecreta,
     } = req.body;
 
-    // Verificar qué datos están llegando en la solicitud
-    console.log(req.body);  // Verifica si todos los datos están ahí
-
     if (!nombre || !ap || !am || !username || !email || !password || !telefono || !preguntaSecreta || !respuestaSecreta) {
       return res.status(400).json({ error: "Todos los campos son obligatorios" });
     }
 
-    // Hash de la contraseña antes de guardarla
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const nuevoUsuario = new Usuario({
@@ -33,10 +29,11 @@ router.post("/", async (req, res) => {
       am,
       username,
       email,
-      password: hashedPassword, 
+      password: hashedPassword,
       telefono,
       preguntaSecreta,
       respuestaSecreta,
+      rol: "usuario",
     });
 
     await nuevoUsuario.save();
@@ -46,5 +43,31 @@ router.post("/", async (req, res) => {
     res.status(500).json({ error: "Error al registrar usuario" });
   }
 });
+// a partir de aqui es del inicio de sesion
+const jwt = require("jsonwebtoken");
+
+router.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const usuario = await Usuario.findOne({ email });
+    if (!usuario) return res.status(400).json({ error: "Usuario no encontrado" });
+
+    const esValida = await bcrypt.compare(password, usuario.password);
+    if (!esValida) return res.status(400).json({ error: "Contraseña incorrecta" });
+
+    const token = jwt.sign(
+      { id: usuario._id, rol: usuario.rol },
+      "secreto",
+      { expiresIn: "1h" }
+    );
+
+    res.json({ token, rol: usuario.rol });
+    res.json({ token, rol: usuario.rol, nombre: usuario.nombre });
+  } catch (error) {
+    res.status(500).json({ error: "Error en el servidor" });
+  }
+});
+
 
 module.exports = router;
