@@ -1,25 +1,22 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import InicioP from "./Inicio";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Catalogo from "./components/catalogo";
+import Footer from "./components/footer";
+import Registro from "./views/public/registro";
+import Login from "./views/public/login";
 
-const IndexP = () => {
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (!token) {
-      navigate("/login");
-    }
-  }, [navigate]);
-
+const Inicio = () => {
   return (
-    <div>
-      <h2>Bienvenido a la página privada</h2>
-      <button onClick={() => {
-        localStorage.removeItem("token");
-        navigate("/login");
-      }}>Cerrar sesión</button>
-    </div>
+    <>
+    <InicioP />
+    <Routes>
+        <Route path="/" element={<Catalogo />} />
+        <Route path="/registro" element={<Registro />} />
+        <Route path="/login" element={<Login />} />
+    </Routes>
+    <Footer />
+    </>
   );
 };
 
-export default IndexP;
+export default Inicio;

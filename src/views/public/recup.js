@@ -1,5 +1,11 @@
-const Recup = () => {
-    return <div>Contenido de recuperacion de contraseña</div>;
-  };
+import FormCorreo from "../../components/formCorreo";
 
-  export default Recup;
+const Correo = () => {
+  return (
+    <div>
+      <FormCorreo />
+    </div>
+  );
+};
+
+export default Correo;

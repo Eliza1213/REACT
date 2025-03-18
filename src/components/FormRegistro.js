@@ -30,9 +30,7 @@ const FormRegistro = () => {
     }
   };
 
-  const validarFormulario = async (e) => {
-    e.preventDefault();
-    console.log(formData); 
+  const validarPaso = (step) => {
     const {
       nombre,
       ap,
@@ -55,78 +53,108 @@ const FormRegistro = () => {
 
     let errorMessage = "";
 
-    if (!soloLetras.test(nombre)) errorMessage += "El campo 'Nombre/s' solo debe contener letras.\n";
-    if (!soloLetras.test(ap)) errorMessage += "El campo 'Apellido Paterno' solo debe contener letras.\n";
-    if (!soloLetras.test(am)) errorMessage += "El campo 'Apellido Materno' solo debe contener letras.\n";
-    if (!letrasYNumeros.test(username)) errorMessage += "El campo 'Nombre de Usuario/Alias' solo debe contener letras y números.\n";
-    if (!emailRegex.test(email)) errorMessage += "El campo 'Correo Electrónico' no es válido.\n";
-    if (!passwordRegex.test(password)) errorMessage += "La contraseña debe tener al menos 12 caracteres, incluyendo una letra mayúscula, un número y un carácter especial.\n";
-    if (password !== confirmPassword) errorMessage += "Las contraseñas no coinciden.\n";
-    if (!telefonoRegex.test(telefono)) errorMessage += "El campo 'Número de Teléfono' debe contener exactamente 10 dígitos.\n";
-    if (!soloLetras.test(respuestaSecreta)) errorMessage += "El campo 'Respuesta Secreta' solo debe contener letras.\n";
-    if (!terminos) errorMessage += "Debe aceptar los términos y condiciones.\n";
+    if (step === 0) {
+      if (!soloLetras.test(nombre)) errorMessage += "El campo 'Nombre/s' solo debe contener letras.\n";
+      if (!soloLetras.test(ap)) errorMessage += "El campo 'Apellido Paterno' solo debe contener letras.\n";
+      if (!soloLetras.test(am)) errorMessage += "El campo 'Apellido Materno' solo debe contener letras.\n";
+    }
+
+    if (step === 1) {
+      if (!letrasYNumeros.test(username)) errorMessage += "El campo 'Nombre de Usuario/Alias' solo debe contener letras y números.\n";
+      if (!emailRegex.test(email)) errorMessage += "El campo 'Correo Electrónico' no es válido.\n";
+      if (!passwordRegex.test(password)) errorMessage += "La contraseña debe tener al menos 12 caracteres, incluyendo una letra mayúscula, un número y un carácter especial.\n";
+      if (password !== confirmPassword) errorMessage += "Las contraseñas no coinciden.\n";
+    }
+
+    if (step === 2) {
+      if (!telefonoRegex.test(telefono)) errorMessage += "El campo 'Número de Teléfono' debe contener exactamente 10 dígitos.\n";
+      if (!soloLetras.test(respuestaSecreta)) errorMessage += "El campo 'Respuesta Secreta' solo debe contener letras.\n";
+      if (!terminos) errorMessage += "Debe aceptar los términos y condiciones.\n";
+      if (!preguntaSecreta) errorMessage += "Debe seleccionar una pregunta secreta.\n";
+    }
 
     if (errorMessage) {
       Swal.fire({ title: "Errores en el formulario", text: errorMessage, icon: "error" });
-    } else {
-      try {
-        // Enviar los datos al servidor
-        const response = await fetch("http://localhost:4000/api/usuarios", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            nombre,
-            ap,
-            am,
-            username,
-            email,
-            password,
-            telefono,
-            preguntaSecreta,
-            respuestaSecreta,
-          }),
-        });
+      return false;
+    }
+    return true;
+  };
 
-        const data = await response.json();
-        if (response.ok) {
-          Swal.fire({
-            title: "Registro exitoso",
-            text: data.mensaje,
-            icon: "success",
-          }).then(() => {
-            // Limpiar formulario si es exitoso
-            setFormData({
-              nombre: "",
-              ap: "",
-              am: "",
-              username: "",
-              email: "",
-              password: "",
-              confirmPassword: "",
-              telefono: "",
-              preguntaSecreta: "",
-              respuestaSecreta: "",
-              terminos: false,
-            });
+  const handleNextStep = (nextStep) => {
+    if (validarPaso(step)) {
+      setStep(nextStep);
+    }
+  };
+
+  const validarFormulario = async (e) => {
+    e.preventDefault();
+    if (!validarPaso(2)) return;  // Solo valida en el paso final al hacer submit
+
+    const {
+      nombre,
+      ap,
+      am,
+      username,
+      email,
+      password,
+      telefono,
+      preguntaSecreta,
+      respuestaSecreta,
+    } = formData;
+
+    try {
+      const response = await fetch("http://localhost:4000/api/usuarios", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nombre,
+          ap,
+          am,
+          username,
+          email,
+          password,
+          telefono,
+          preguntaSecreta,
+          respuestaSecreta,
+        }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        Swal.fire({
+          title: "Registro exitoso",
+          text: data.mensaje,
+          icon: "success",
+        }).then(() => {
+          setFormData({
+            nombre: "",
+            ap: "",
+            am: "",
+            username: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+            telefono: "",
+            preguntaSecreta: "",
+            respuestaSecreta: "",
+            terminos: false,
           });
-        } else {
-          Swal.fire({
-            title: "Error",
-            text: data.error || "Hubo un error al registrar el usuario.",
-            icon: "error",
-          });
-        }
-      } catch (error) {
+        });
+      } else {
         Swal.fire({
           title: "Error",
-          text: "No se pudo conectar con el servidor.",
+          text: data.error || "Hubo un error al registrar el usuario.",
           icon: "error",
         });
       }
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: "No se pudo conectar con el servidor.",
+        icon: "error",
+      });
     }
-  };  
+  };
 
   return (
     <section id="registro">
@@ -140,7 +168,7 @@ const FormRegistro = () => {
             <input type="text" name="ap" value={formData.ap} onChange={handleChange} required />
             <label>Apellido Materno:</label>
             <input type="text" name="am" value={formData.am} onChange={handleChange} required />
-            <button type="button" onClick={() => setStep(1)}>Siguiente</button>
+            <button type="button" onClick={() => handleNextStep(1)}>Siguiente</button>
           </div>
         )}
 
@@ -157,7 +185,7 @@ const FormRegistro = () => {
             <input type="password" id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required maxLength={12}/>
             <button type="button" onClick={() => togglePassword("confirmPassword")}>👁️</button>
             <button type="button" onClick={() => setStep(0)}>Atrás</button>
-            <button type="button" onClick={() => setStep(2)}>Siguiente</button>
+            <button type="button" onClick={() => handleNextStep(2)}>Siguiente</button>
           </div>
         )}
 

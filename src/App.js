@@ -1,10 +1,10 @@
-import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
-import Header from "./components/header";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Header from "./components/headerPublic";
 import Catalogo from "./components/catalogo";
 import Footer from "./components/footer";
 import Registro from "./views/public/registro";
 import Login from "./views/public/login";
-import IndexP from "./views/private/indexP";
+import Inicio from "./views/private/Inicio";
 
 function App() {
   return (
@@ -14,8 +14,7 @@ function App() {
         <Route path="/" element={<Catalogo />} />
         <Route path="/registro" element={<Registro />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/private/indexP" element={<IndexP />} />
-        <Route path="*" element={<Navigate to="/login" />} />
+        <Route path="/login" element={<Inicio />} />
       </Routes>
       <Footer />
     </>

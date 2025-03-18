@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import "../styles/Header.css";
 
-const Header = () => {
+const HeaderUser = () => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [submenuOpen, setSubmenuOpen] = useState(null);
 
@@ -24,23 +24,23 @@ const Header = () => {
 
         <div className="dropdown">
           <button className="nav-link" onClick={() => toggleSubmenu("sesion")}>
-            Sesión
+            Cliente
           </button>
           <ul className={`dropdown-menu ${submenuOpen === "sesion" ? "open" : ""}`}>
-            <li><Link to="/registro" className="dropdown-item">Formulario de registro</Link></li>
-            <li><Link to="/login" className="dropdown-item">Login</Link></li>
-            <li><Link to="/recuperacion" className="dropdown-item">Recuperación de contraseña</Link></li>
+            <li><Link to="/registro" className="dropdown-item">Perfil</Link></li>
+            <li><Link to="/login" className="dropdown-item">Modificacion de datos</Link></li>
+            <li><Link to="/recuperacion" className="dropdown-item">Eliminacion de cuenta</Link></li>
           </ul>
         </div>
 
         <div className="dropdown">
           <button className="nav-link" onClick={() => toggleSubmenu("info")}>
-            Información de tortugas
+            Dispositivo IoT
           </button>
           <ul className={`dropdown-menu ${submenuOpen === "info" ? "open" : ""}`}>
-            <li><Link to="/src/views/public/tortugasAdecuadas" className="dropdown-item">Tortugas adecuadas</Link></li>
-            <li><Link to="/src/views/public/cuidadosBasicos" className="dropdown-item">Cuidados básicos</Link></li>
-            <li><Link to="/src/views/public/consejos" className="dropdown-item">Consejos para el hábitat</Link></li>
+            <li><Link to="/src/views/public/tortugasAdecuadas" className="dropdown-item">Alta de dispositivo</Link></li>
+            <li><Link to="/src/views/public/cuidadosBasicos" className="dropdown-item">Consulta de dispositivos</Link></li>
+            <li><Link to="/src/views/public/consejos" className="dropdown-item">manipulacion de dispositivos</Link></li>
           </ul>
         </div>
       </nav>
@@ -56,23 +56,23 @@ const Header = () => {
 
         <div className="dropdown">
           <button className="nav-link" onClick={() => toggleSubmenu("sesion")}>
-            Sesión
+            Cliente
           </button>
           <ul className={`dropdown-menu ${submenuOpen === "sesion" ? "open" : ""}`}>
-            <li><Link to="/src/views/public/registro" className="dropdown-item">Formulario de registro</Link></li>
-            <li><Link to="/src/views/public/login" className="dropdown-item">Login</Link></li>
-            <li><Link to="/src/views/public/recuperacion" className="dropdown-item">Recuperación de contraseña</Link></li>
+            <li><Link to="/src/views/public/registro" className="dropdown-item">Perfil</Link></li>
+            <li><Link to="/src/views/public/login" className="dropdown-item">Modificacion de datos</Link></li>
+            <li><Link to="/src/views/public/recuperacion" className="dropdown-item">Eliminacion de cuenta</Link></li>
           </ul>
         </div>
 
         <div className="dropdown">
           <button className="nav-link" onClick={() => toggleSubmenu("info")}>
-            Información de tortugas
+            Dispositivo IoT
           </button>
           <ul className={`dropdown-menu ${submenuOpen === "info" ? "open" : ""}`}>
-            <li><Link to="/src/views/public/tortugasAdecuadas" className="dropdown-item">Tortugas adecuadas</Link></li>
-            <li><Link to="/src/views/public/cuidadosBasicos" className="dropdown-item">Cuidados básicos</Link></li>
-            <li><Link to="/src/views/public/consejos" className="dropdown-item">Consejos para el hábitat</Link></li>
+            <li><Link to="/src/views/public/tortugasAdecuadas" className="dropdown-item">Alta de dispositivo</Link></li>
+            <li><Link to="/src/views/public/cuidadosBasicos" className="dropdown-item">Consulta de dispositivos</Link></li>
+            <li><Link to="/src/views/public/consejos" className="dropdown-item">manipulacion de dispositivos</Link></li>
           </ul>
         </div>
       </nav>
@@ -80,4 +80,4 @@ const Header = () => {
   );
 };
 
-export default Header;
+export default HeaderUser;

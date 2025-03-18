@@ -1,129 +1,97 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import '../styles/Login.css';
-import { useNavigate } from "react-router-dom";  // Importa useNavigate
 
 const FormLogin = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [formData, setFormData] = useState({ email: "", password: "" });
   const [showPassword, setShowPassword] = useState(false);
-  
-  const navigate = useNavigate();  // Usa useNavigate aquí para acceder a la función de navegación
+  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
 
-    let isValid = true;
-    let errorMessage = "";
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+
+    let errors = [];
 
     // Validación del email
     const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
-    if (!emailRegex.test(email)) {
-      isValid = false;
-      errorMessage += "El campo 'Correo Electrónico' no es válido.\n";
+    if (!emailRegex.test(formData.email)) {
+      errors.push("El campo 'Correo Electrónico' no es válido.");
     }
 
     // Validación de la contraseña
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{12,}$/;
-    if (!passwordRegex.test(password)) {
-      isValid = false;
-      errorMessage += "La contraseña debe tener al menos 12 caracteres, incluyendo una letra mayúscula, un número y un carácter especial.\n";
+    if (!passwordRegex.test(formData.password)) {
+      errors.push("La contraseña debe tener al menos 12 caracteres, incluyendo una letra mayúscula, un número y un carácter especial.");
     }
 
-    if (!isValid) {
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: errorMessage,
-        confirmButtonColor: "#d33",
-      });
+    if (errors.length > 0) {
+      Swal.fire({ icon: "error", title: "Error", html: errors.join("<br>"), confirmButtonColor: "#d33" });
+      setLoading(false);
       return;
     }
 
-    // Si la validación pasa, hacer la solicitud POST al backend
     try {
-      const response = await fetch("http://localhost:4000/api/auth", {
+      const response = await fetch("http://localhost:4000/api/usuarios/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email,
-          password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
       });
 
       const data = await response.json();
+      if (!response.ok) throw new Error(data.error);
 
-      if (response.ok) {
-        localStorage.setItem("token", data.token);
-        Swal.fire({
-          icon: "success",
-          title: "¡Inicio de sesión exitoso!",
-          text: "Bienvenido de nuevo.",
-          confirmButtonColor: "#4caf50",
-        });
-        
-        // Usar navigate para redirigir a la página privada en lugar de window.location.href
-        navigate("/private/indexP");  // Redirige a la página privada
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Error",
-          text: data.error || "Hubo un problema con el inicio de sesión.",
-          confirmButtonColor: "#d33",
-        });
-      }
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("rol", data.rol);
+      localStorage.setItem("usuario", data.nombre);
+
+      Swal.fire({ icon: "success", title: "Inicio de sesión exitoso", text: "Bienvenido de nuevo." });
+
+      navigate(data.rol === "administrador" ? "/admin" : "/usuario");
     } catch (error) {
-      console.error("Error de conexión:", error);
-      Swal.fire({
-        icon: "error",
-        title: "Error",
-        text: "No se pudo conectar con el servidor. Intenta nuevamente.",
-        confirmButtonColor: "#d33",
-      });
+      Swal.fire({ icon: "error", title: "Error", text: error.message, confirmButtonColor: "#d33" });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label htmlFor="email">Correo Electrónico:</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        required
-      />
+    <section id="login">
+      <h2>Iniciar Sesión</h2>
+      <form onSubmit={handleSubmit} style={{ maxWidth: "400px", margin: "auto" }}>
+        <label>Correo Electrónico:</label>
+        <input type="email" name="email" value={formData.email} onChange={handleChange} required />
 
-      <label htmlFor="password">Contraseña:</label>
-      <div>
-        <input
-          type={showPassword ? "text" : "password"}
-          id="password"
-          name="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          maxLength={12}
-        />
-        <button type="button" onClick={togglePasswordVisibility}>
-          {showPassword ? "🙈" : "👁️"}
+        <label>Contraseña:</label>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <input type={showPassword ? "text" : "password"} name="password" value={formData.password} onChange={handleChange} required maxLength={12} />
+          <button type="button" onClick={togglePasswordVisibility} style={{ marginLeft: "10px" }}>
+            {showPassword ? "🙈" : "👁️"}
+          </button>
+        </div>
+
+        <label>
+          ¿Olvidaste la contraseña?{" "}
+          <button type="button" onClick={() => navigate("/recup")} style={{ background: "none", border: "none", color: "blue", cursor: "pointer", textDecoration: "underline" }}>
+            Recuperar la contraseña
+          </button>
+        </label>
+
+        <button type="submit" disabled={loading}>
+          {loading ? "Iniciando sesión..." : "Iniciar Sesión"}
         </button>
-      </div>
-
-      <label>
-        ¿Olvidaste la contraseña? 
-        <a href="verificarCorreo.html">Recuperar la contraseña</a>
-      </label>
-
-      <button type="submit">Iniciar Sesión</button>
-    </form>
+      </form>
+    </section>
   );
 };
 
