@@ -1,23 +1,40 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Header from "./components/headerPublic";
-import Catalogo from "./components/catalogo";
-import Footer from "./components/footer";
-import Registro from "./views/public/registro";
-import Login from "./views/public/login";
-import Inicio from "./views/private/Inicio";
+// src/App.js
+
+import React from "react";
+import { Routes, Route } from "react-router-dom";
+import FormLogin from "./components/FormLogin";
+import FormRegistro from "./components/FormRegistro";
+import Home from "./components/Home";
+import UserDashboard from "./page/UserDashboard";
+import AdminDashboard from "./page/AdminDashboard";
+import PrivateRoute from "./components/PrivateRoute";
+import AdminRoute from "./components/AdminRoute";
+import HeaderPublic from "./components/HeaderPublic";
+import Perfil from "./components/Perfil";
+import TerrarioControl from "./components/TerrarioControl";
 
 function App() {
   return (
-    <>
-      <Header />
+    <div>
+      <HeaderPublic />
       <Routes>
-        <Route path="/" element={<Catalogo />} />
-        <Route path="/registro" element={<Registro />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/login" element={<Inicio />} />
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<FormLogin />} />
+        <Route path="/registro" element={<FormRegistro />} />
+
+        <Route element={<PrivateRoute />}>
+          <Route path="/usuario" element={<UserDashboard />} />
+          <Route path="configuraciones" element={<TerrarioControl />}/>
+          <Route path="/perfil" element={<Perfil />} />
+        </Route>
+
+        <Route element={<AdminRoute />}>
+          <Route path="/admin/*" element={<AdminDashboard />}>
+            {/* Añade otras rutas de administración aquí */}
+          </Route>
+        </Route>
       </Routes>
-      <Footer />
-    </>
+    </div>
   );
 }
 

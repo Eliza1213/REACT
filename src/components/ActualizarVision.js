@@ -1,26 +1,31 @@
+// components/ActualizarVision.js
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 
 const ActualizarVision = () => {
-  const { id } = useParams(); // Obtiene el ID de la misión desde la URL
-  const navigate = useNavigate(); // Para redirigir después de actualizar
+  const { id } = useParams();
+  const navigate = useNavigate();
   const [titulo, setTitulo] = useState("");
   const [descripcion, setDescripcion] = useState("");
+  const [error, setError] = useState("");
 
   useEffect(() => {
-    const fetchMision = async () => {
+    const fetchVision = async () => {
       try {
+        console.log("Obteniendo visión con ID:", id); // Depuración
         const response = await fetch(`http://localhost:4000/api/visiones/${id}`);
         if (!response.ok) throw new Error("Error al obtener la visión");
         const data = await response.json();
+        console.log("Visión obtenida:", data); // Depuración
         setTitulo(data.titulo);
         setDescripcion(data.descripcion);
       } catch (error) {
         console.error(error);
+        setError("Error al obtener la visión.");
       }
     };
 
-    fetchMision();
+    fetchVision();
   }, [id]);
 
   const handleSubmit = async (e) => {
@@ -29,6 +34,7 @@ const ActualizarVision = () => {
     const updatedVision = { titulo, descripcion };
 
     try {
+      console.log("Enviando solicitud PUT:", updatedVision); // Depuración
       const response = await fetch(`http://localhost:4000/api/visiones/${id}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
@@ -37,18 +43,20 @@ const ActualizarVision = () => {
 
       if (response.ok) {
         alert("Visión actualizada con éxito");
-        navigate("/admin/visiones/listar"); // Redirige a la lista de misiones
+        navigate("/admin/visiones/listar");
       } else {
-        alert("Error al actualizar Visión");
+        throw new Error("Error al actualizar visión");
       }
     } catch (error) {
       console.error("Error en la actualización:", error);
+      setError(error.message);
     }
   };
 
   return (
     <div className="visiones-container">
       <h2>Actualizar Visión</h2>
+      {error && <p style={{ color: "red" }}>{error}</p>}
       <form onSubmit={handleSubmit}>
         <input
           type="text"
@@ -67,7 +75,6 @@ const ActualizarVision = () => {
       </form>
     </div>
   );
-  
 };
 
 export default ActualizarVision;

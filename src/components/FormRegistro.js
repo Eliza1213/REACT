@@ -1,9 +1,8 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import '../styles/registro.css';
 
 const FormRegistro = () => {
-  const [step, setStep] = useState(0);
   const [formData, setFormData] = useState({
     nombre: "",
     ap: "",
@@ -18,18 +17,25 @@ const FormRegistro = () => {
     terminos: false,
   });
 
+  const [step, setStep] = useState(0); // Paso actual del formulario
+  const [showPassword, setShowPassword] = useState(false); // Mostrar/ocultar contraseña
+  const navigate = useNavigate();
+
+  // Manejar cambios en los campos del formulario
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData({ ...formData, [name]: type === "checkbox" ? checked : value });
+    setFormData({
+      ...formData,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
-  const togglePassword = (id) => {
-    const input = document.getElementById(id);
-    if (input) {
-      input.type = input.type === "password" ? "text" : "password";
-    }
+  // Mostrar/ocultar contraseña
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
+  // Validar el paso actual del formulario
   const validarPaso = (step) => {
     const {
       nombre,
@@ -40,7 +46,6 @@ const FormRegistro = () => {
       password,
       confirmPassword,
       telefono,
-      preguntaSecreta,
       respuestaSecreta,
       terminos,
     } = formData;
@@ -51,124 +56,96 @@ const FormRegistro = () => {
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[^a-zA-Z0-9]).{12,}$/;
     const telefonoRegex = /^[0-9]{10}$/;
 
-    let errorMessage = "";
+    let errores = [];
 
     if (step === 0) {
-      if (!soloLetras.test(nombre)) errorMessage += "El campo 'Nombre/s' solo debe contener letras.\n";
-      if (!soloLetras.test(ap)) errorMessage += "El campo 'Apellido Paterno' solo debe contener letras.\n";
-      if (!soloLetras.test(am)) errorMessage += "El campo 'Apellido Materno' solo debe contener letras.\n";
+      if (!soloLetras.test(nombre)) errores.push("El campo 'Nombre/s' solo debe contener letras.");
+      if (!soloLetras.test(ap)) errores.push("El campo 'Apellido Paterno' solo debe contener letras.");
+      if (!soloLetras.test(am)) errores.push("El campo 'Apellido Materno' solo debe contener letras.");
     }
 
     if (step === 1) {
-      if (!letrasYNumeros.test(username)) errorMessage += "El campo 'Nombre de Usuario/Alias' solo debe contener letras y números.\n";
-      if (!emailRegex.test(email)) errorMessage += "El campo 'Correo Electrónico' no es válido.\n";
-      if (!passwordRegex.test(password)) errorMessage += "La contraseña debe tener al menos 12 caracteres, incluyendo una letra mayúscula, un número y un carácter especial.\n";
-      if (password !== confirmPassword) errorMessage += "Las contraseñas no coinciden.\n";
+      if (!letrasYNumeros.test(username)) errores.push("El campo 'Nombre de Usuario' solo debe contener letras y números.");
+      if (!emailRegex.test(email)) errores.push("El campo 'Correo Electrónico' no es válido.");
+      if (!passwordRegex.test(password)) errores.push("La contraseña debe tener al menos 12 caracteres, incluyendo una letra mayúscula, un número y un carácter especial.");
+      if (password !== confirmPassword) errores.push("Las contraseñas no coinciden.");
     }
 
     if (step === 2) {
-      if (!telefonoRegex.test(telefono)) errorMessage += "El campo 'Número de Teléfono' debe contener exactamente 10 dígitos.\n";
-      if (!soloLetras.test(respuestaSecreta)) errorMessage += "El campo 'Respuesta Secreta' solo debe contener letras.\n";
-      if (!terminos) errorMessage += "Debe aceptar los términos y condiciones.\n";
-      if (!preguntaSecreta) errorMessage += "Debe seleccionar una pregunta secreta.\n";
+      if (!telefonoRegex.test(telefono)) errores.push("El campo 'Teléfono' debe contener exactamente 10 dígitos.");
+      if (!soloLetras.test(respuestaSecreta)) errores.push("El campo 'Respuesta Secreta' solo debe contener letras.");
+      if (!terminos) errores.push("Debes aceptar los términos y condiciones.");
     }
 
-    if (errorMessage) {
-      Swal.fire({ title: "Errores en el formulario", text: errorMessage, icon: "error" });
+    if (errores.length > 0) {
+      Swal.fire({
+        icon: "error",
+        title: "Errores en el formulario",
+        html: errores.join("<br>"),
+      });
       return false;
     }
     return true;
   };
 
-  const handleNextStep = (nextStep) => {
-    if (validarPaso(step)) {
-      setStep(nextStep);
-    }
-  };
-
-  const validarFormulario = async (e) => {
+  // Manejar el envío del formulario
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!validarPaso(2)) return;  // Solo valida en el paso final al hacer submit
 
-    const {
-      nombre,
-      ap,
-      am,
-      username,
-      email,
-      password,
-      telefono,
-      preguntaSecreta,
-      respuestaSecreta,
-    } = formData;
+    if (!validarPaso(2)) return; // Validar el último paso antes de enviar
 
     try {
-      const response = await fetch("http://localhost:4000/api/usuarios", {
+      const response = await fetch("http://localhost:4000/api/usuarios/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          nombre,
-          ap,
-          am,
-          username,
-          email,
-          password,
-          telefono,
-          preguntaSecreta,
-          respuestaSecreta,
+          nombre: formData.nombre,
+          ap: formData.ap,
+          am: formData.am,
+          username: formData.username,
+          email: formData.email,
+          password: formData.password,
+          telefono: formData.telefono,
+          preguntaSecreta: formData.preguntaSecreta,
+          respuestaSecreta: formData.respuestaSecreta,
         }),
       });
 
       const data = await response.json();
-      if (response.ok) {
-        Swal.fire({
-          title: "Registro exitoso",
-          text: data.mensaje,
-          icon: "success",
-        }).then(() => {
-          setFormData({
-            nombre: "",
-            ap: "",
-            am: "",
-            username: "",
-            email: "",
-            password: "",
-            confirmPassword: "",
-            telefono: "",
-            preguntaSecreta: "",
-            respuestaSecreta: "",
-            terminos: false,
-          });
-        });
-      } else {
-        Swal.fire({
-          title: "Error",
-          text: data.error || "Hubo un error al registrar el usuario.",
-          icon: "error",
-        });
-      }
+      if (!response.ok) throw new Error(data.error);
+
+      Swal.fire({
+        icon: "success",
+        title: "Registro exitoso",
+        text: "¡Bienvenido! Por favor, inicia sesión.",
+      }).then(() => {
+        navigate("/login"); // Redirigir al login después del registro
+      });
     } catch (error) {
       Swal.fire({
-        title: "Error",
-        text: "No se pudo conectar con el servidor.",
         icon: "error",
+        title: "Error",
+        text: error.message,
       });
     }
   };
 
   return (
-    <section id="registro">
+    <div>
       <h2>Registro de Usuario</h2>
-      <form onSubmit={validarFormulario} style={{ maxWidth: "400px", margin: "auto" }}>
+      <form onSubmit={handleSubmit}>
         {step === 0 && (
           <div>
             <label>Nombre/s:</label>
             <input type="text" name="nombre" value={formData.nombre} onChange={handleChange} required />
+
             <label>Apellido Paterno:</label>
             <input type="text" name="ap" value={formData.ap} onChange={handleChange} required />
+
             <label>Apellido Materno:</label>
             <input type="text" name="am" value={formData.am} onChange={handleChange} required />
-            <button type="button" onClick={() => handleNextStep(1)}>Siguiente</button>
+
+            <button type="button" onClick={() => setStep(1)}>Siguiente</button>
           </div>
         )}
 
@@ -176,43 +153,71 @@ const FormRegistro = () => {
           <div>
             <label>Nombre de Usuario:</label>
             <input type="text" name="username" value={formData.username} onChange={handleChange} required />
+
             <label>Correo Electrónico:</label>
             <input type="email" name="email" value={formData.email} onChange={handleChange} required />
+
             <label>Contraseña:</label>
-            <input type="password" id="password" name="password" value={formData.password} onChange={handleChange} required maxLength={12}/>
-            <button type="button" onClick={() => togglePassword("password")}>👁️</button>
+            <input
+              type={showPassword ? "text" : "password"}
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              required
+            />
+            <button type="button" onClick={togglePasswordVisibility}>
+              {showPassword ? "🙈" : "👁️"}
+            </button>
+
             <label>Confirmar Contraseña:</label>
-            <input type="password" id="confirmPassword" name="confirmPassword" value={formData.confirmPassword} onChange={handleChange} required maxLength={12}/>
-            <button type="button" onClick={() => togglePassword("confirmPassword")}>👁️</button>
+            <input
+              type={showPassword ? "text" : "password"}
+              name="confirmPassword"
+              value={formData.confirmPassword}
+              onChange={handleChange}
+              required
+            />
+
             <button type="button" onClick={() => setStep(0)}>Atrás</button>
-            <button type="button" onClick={() => handleNextStep(2)}>Siguiente</button>
+            <button type="button" onClick={() => setStep(2)}>Siguiente</button>
           </div>
         )}
 
         {step === 2 && (
           <div>
-            <label>Número de Teléfono:</label>
+            <label>Teléfono:</label>
             <input type="tel" name="telefono" value={formData.telefono} onChange={handleChange} required />
+
             <label>Pregunta Secreta:</label>
             <select name="preguntaSecreta" value={formData.preguntaSecreta} onChange={handleChange} required>
-              <option value="">Seleccione una pregunta</option>
+              <option value="">Selecciona una pregunta</option>
               <option value="personaje-favorito">¿Cuál es tu personaje favorito?</option>
               <option value="pelicula-favorita">¿Cuál es tu película favorita?</option>
               <option value="mejor-amigo">¿Quién es tu mejor amigo?</option>
               <option value="nombre-mascota">¿Cuál es el nombre de tu mascota?</option>
               <option value="deporte-favorito">¿Cuál es tu deporte favorito?</option>
             </select>
+
             <label>Respuesta Secreta:</label>
             <input type="text" name="respuestaSecreta" value={formData.respuestaSecreta} onChange={handleChange} required />
+
             <label>
-              <input type="checkbox" name="terminos" checked={formData.terminos} onChange={handleChange} required /> Acepto los Términos y Condiciones
+              <input
+                type="checkbox"
+                name="terminos"
+                checked={formData.terminos}
+                onChange={handleChange}
+                required
+              />
+              Acepto los términos y condiciones
             </label>
+
             <button type="button" onClick={() => setStep(1)}>Atrás</button>
             <button type="submit">Registrarse</button>
           </div>
         )}
       </form>
-    </section>
+    </div>
   );
 };
 

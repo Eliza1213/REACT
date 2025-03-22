@@ -1,0 +1,81 @@
+/* terrarioControl.css */
+.terrario-control {
+  padding: 20px;
+  text-align: center;
+  background-color: #f4f4f9;
+  min-height: 100vh;
+}
+
+.widgets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  justify-content: center;
+  padding: 20px;
+}
+
+.widget {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 20px;
+  width: 200px;
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.widget:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.widget h2 {
+  margin: 0 0 10px;
+  font-size: 1.2em;
+  color: #333;
+}
+
+.widget p {
+  margin: 0 0 10px;
+  font-size: 1.1em;
+  color: #666;
+}
+
+.widget button {
+  padding: 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.widget button:hover {
+  background-color: #0056b3;
+}
+
+/* Colores específicos para cada widget */
+.widget[data-type="temperatura"] {
+  background-color: #ffebee; /* Rojo claro */
+}
+
+.widget[data-type="humedad"] {
+  background-color: #e3f2fd; /* Azul claro */
+}
+
+.widget[data-type="comida"] {
+  background-color: #f1f8e9; /* Verde claro */
+}
+
+.widget[data-type="movimiento"] {
+  background-color: #fff3e0; /* Naranja claro */
+}
+
+.widget[data-type="ventilador"] {
+  background-color: #f5f5f5; /* Gris claro */
+}
+
+.widget[data-type="lampara"] {
+  background-color: #fffde7; /* Amarillo claro */
+}

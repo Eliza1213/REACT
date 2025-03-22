@@ -1,0 +1,141 @@
+/* Estilos generales */
+.user-dashboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2rem;
+  background-color: #f7fff7; /* Fondo blanco verdoso */
+  min-height: 100vh;
+  position: relative;
+}
+
+.user-dashboard h1 {
+  font-size: 2rem;
+  color: #1a535c; /* Verde oscuro */
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* Header */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* Asegura que el header esté por encima */
+  background-color: #1a535c; /* Verde oscuro */
+  padding: 1rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Contenedor del perfil y gestor */
+.profile-manager {
+  position: fixed;
+  top: 7rem; /* Mover más abajo para evitar superposición */
+  right: 1rem;
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  z-index: 999; /* Menor que el header */
+}
+
+.profile-manager a {
+  text-decoration: none;
+  color: #f7fff7; /* Blanco verdoso */
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  background-color: #76bb3e; /* Verde turquesa */
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.profile-manager a:hover {
+  background-color: #228B22; /* Verde fuerte */
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Menú de navegación */
+.user-nav {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.user-nav-link {
+  text-decoration: none;
+  color: #f7fff7; /* Blanco verdoso */
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  background-color: #228B22; /* Verde fuerte */
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-nav-link:hover {
+  background-color: #32CD32; /* Verde lime */
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Deslizador para el perfil */
+.profile-slider {
+  position: fixed;
+  top: 0;
+  right: -300px; /* Oculto por defecto */
+  width: 300px;
+  height: 100vh;
+  background-color: #1a535c; /* Verde oscuro */
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.2);
+  transition: right 0.3s ease;
+  z-index: 998; /* Menor que el header y el botón de perfil */
+}
+
+.profile-slider.open {
+  right: 0; /* Mostrar deslizador */
+}
+
+.profile-slider-content {
+  padding: 2rem;
+  color: #f7fff7; /* Blanco verdoso */
+}
+
+.profile-slider-content h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.profile-slider-content a {
+  display: block;
+  color: #f7fff7;
+  text-decoration: none;
+  padding: 0.5rem 0;
+  transition: color 0.3s ease;
+}
+
+.profile-slider-content a:hover {
+  color: #4ecdc4; /* Verde turquesa */
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .user-nav {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .profile-manager {
+    top: 4rem; /* Ajuste para móviles */
+  }
+
+  .profile-slider {
+    width: 100%;
+    right: -100%; /* Oculto por defecto en móviles */
+  }
+
+  .profile-slider.open {
+    right: 0; /* Mostrar deslizador en móviles */
+  }
+}

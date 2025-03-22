@@ -1,0 +1,153 @@
+/* Estilos generales */
+.home-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh; /* Ocupa toda la altura de la pantalla */
+  width: 100vw; /* Ocupa todo el ancho de la pantalla */
+  background-color: #f7fff7; /* Fondo blanco verdoso */
+  color: #1a535c; /* Verde oscuro */
+  position: relative;
+  overflow: hidden;
+}
+
+/* Contenedor principal */
+.home-content {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.8); /* Fondo semi-transparente */
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 90%; /* Ocupa el 90% del ancho del contenedor */
+  max-width: 1200px; /* Ancho máximo para evitar que se estire demasiado */
+}
+
+.home-content h1 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  color: #1a535c; /* Verde oscuro */
+}
+
+.home-content p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  color: #1a535c; /* Verde oscuro */
+}
+
+/* Botones */
+.home-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.home-button {
+  text-decoration: none;
+  color: #f7fff7; /* Blanco verdoso */
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  background-color: #4ecdc4; /* Verde turquesa */
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.home-button:hover {
+  background-color: #228B22; /* Verde fuerte */
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Botón para abrir el deslizador izquierdo */
+.slider-toggle.left {
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  background-color: #4ecdc4; /* Verde turquesa */
+  border: none;
+  color: #f7fff7; /* Blanco verdoso */
+  font-size: 1.5rem;
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 1001; /* Encima de todo */
+  transition: background-color 0.3s ease;
+}
+
+.slider-toggle.left:hover {
+  background-color: #228B22; /* Verde fuerte */
+}
+
+/* Deslizador izquierdo */
+.left-slider {
+  position: fixed;
+  top: 0;
+  left: -300px; /* Oculto por defecto */
+  width: 300px;
+  height: 100vh;
+  background-color: #1a535c; /* Verde oscuro */
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.2);
+  transition: left 0.3s ease;
+  z-index: 1000; /* Debajo del botón de toggle */
+}
+
+.left-slider.open {
+  left: 0; /* Mostrar deslizador */
+}
+
+/* Contenido del deslizador */
+.slider-content {
+  padding: 2rem;
+  color: #f7fff7; /* Blanco verdoso */
+}
+
+.slider-content h2 {
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+}
+
+.slider-content a {
+  display: block;
+  color: #f7fff7;
+  text-decoration: none;
+  padding: 0.5rem 0;
+  transition: color 0.3s ease;
+}
+
+.slider-content a:hover {
+  color: #4ecdc4; /* Verde turquesa */
+}
+
+/* Contenedores para imágenes */
+.image-container {
+  margin: 2rem 0;
+  padding: 1rem;
+  background-color: #e0f7fa; /* Fondo claro para contenedores */
+  border-radius: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .home-content h1 {
+    font-size: 2rem;
+  }
+
+  .home-content p {
+    font-size: 1rem;
+  }
+
+  .left-slider {
+    width: 100%;
+    left: -100%; /* Oculto por defecto en móviles */
+  }
+
+  .left-slider.open {
+    left: 0; /* Mostrar deslizador en móviles */
+  }
+}
