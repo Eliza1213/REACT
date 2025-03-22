@@ -1,4 +1,3 @@
-// routes/misionRoutes.js
 const express = require("express");
 const Mision = require("../models/Mision");
 const router = express.Router();
@@ -6,6 +5,7 @@ const router = express.Router();
 // Crear nueva misión
 router.post("/", async (req, res) => {
   try {
+    console.log("Solicitud POST recibida:", req.body); // Depuración
     const { titulo, descripcion } = req.body;
 
     if (!titulo || !descripcion) {
@@ -49,6 +49,7 @@ router.get("/:id", async (req, res) => {
 // Actualizar una misión
 router.put("/:id", async (req, res) => {
   try {
+    console.log("Solicitud PUT recibida:", req.body); // Depuración
     const { titulo, descripcion } = req.body;
     const mision = await Mision.findByIdAndUpdate(
       req.params.id,

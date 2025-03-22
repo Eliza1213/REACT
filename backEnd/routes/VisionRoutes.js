@@ -1,11 +1,11 @@
-// routes/visionRoutes.js
 const express = require("express");
-const Vision = require("../models/Vision");
+const Vision = require("../models/Vision");  // Importar el modelo de Vision
 const router = express.Router();
 
 // Crear nueva visión
 router.post("/", async (req, res) => {
   try {
+    console.log("Solicitud POST recibida:", req.body); // Depuración
     const { titulo, descripcion } = req.body;
 
     if (!titulo || !descripcion) {
@@ -49,6 +49,7 @@ router.get("/:id", async (req, res) => {
 // Actualizar una visión
 router.put("/:id", async (req, res) => {
   try {
+    console.log("Solicitud PUT recibida:", req.body); // Depuración
     const { titulo, descripcion } = req.body;
     const vision = await Vision.findByIdAndUpdate(
       req.params.id,
