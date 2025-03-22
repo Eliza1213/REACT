@@ -25,6 +25,7 @@ app.use("/api/politicas", require("./Routes/PoliticaRoutes"));
 app.use("/api/preguntas", require("./Routes/PreguntaRoutes"));
 app.use("/api/contactos", require("./Routes/ContactoRoutes"));
 app.use("/api/informaciones", require("./Routes/InformacionRoutes"));
+app.use("/api/productos", require("./Routes/ProductoRoutes"));
 app.use("/api/terrario", TerrarioRoutes); // Ahora está correctamente importado
 
 // Nueva ruta para el control de actuadores
