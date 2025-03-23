@@ -56,6 +56,43 @@ const getUsuarios = async (req, res) => {
   }
 };
 
+// Actualizar un usuario (solo para administradores)
+const updateUsuario = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, ap, am, username, email, telefono, preguntaSecreta, respuestaSecreta, rol } = req.body;
+
+    // Buscar el usuario por ID
+    const usuario = await Usuario.findById(id);
+    if (!usuario) {
+      return res.status(404).json({ error: "Usuario no encontrado" });
+    }
+
+    // Actualizar los campos del usuario
+    usuario.nombre = nombre || usuario.nombre;
+    usuario.ap = ap || usuario.ap;
+    usuario.am = am || usuario.am;
+    usuario.username = username || usuario.username;
+    usuario.email = email || usuario.email;
+    usuario.telefono = telefono || usuario.telefono;
+    usuario.preguntaSecreta = preguntaSecreta || usuario.preguntaSecreta;
+    usuario.respuestaSecreta = respuestaSecreta || usuario.respuestaSecreta;
+    usuario.rol = rol || usuario.rol;
+
+    // Guardar los cambios
+    await usuario.save();
+
+    // Excluir la contraseña en la respuesta
+    const usuarioActualizado = usuario.toObject();
+    delete usuarioActualizado.password;
+
+    res.status(200).json({ mensaje: "Usuario actualizado con éxito", usuario: usuarioActualizado });
+  } catch (error) {
+    console.error("Error al actualizar el usuario:", error);
+    res.status(500).json({ error: "Error al actualizar el usuario" });
+  }
+};
+
 // Actualizar el rol de un usuario (solo para administradores)
 const updateRol = async (req, res) => {
   try {
@@ -89,4 +126,4 @@ const deleteUsuario = async (req, res) => {
   }
 };
 
-module.exports = { registerUser, loginUser, getUsuarios, updateRol, deleteUsuario };
+module.exports = { registerUser, loginUser, getUsuarios, updateUsuario, updateRol, deleteUsuario };
